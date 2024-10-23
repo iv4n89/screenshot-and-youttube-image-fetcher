@@ -2,6 +2,17 @@ import data from "../../data.json";
 import { Card } from "../components/Card";
 import { Resources } from "../lib/types";
 
+export async function generateStaticParams() {
+  return [
+    { type: "general" },
+    { type: "javascript" },
+    { type: "typescript" },
+    { type: "react" },
+    { type: "angular" },
+    { type: "tailwind" },
+  ];
+}
+
 export default async function Page({
   params,
 }: Readonly<{
