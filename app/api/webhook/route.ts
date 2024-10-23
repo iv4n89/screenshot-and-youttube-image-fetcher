@@ -8,7 +8,7 @@ export async function POST() {
   try {
     const response = await fetch(GITHUB_API_REPO);
     const data = await response.json();
-    const filePath = path.join("data.json");
+    const filePath = path.join("tmp", "data.json");
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 
     const browser = await puppeteer.launch();
