@@ -46,6 +46,6 @@ export async function POST() {
     return NextResponse.json({ message: "Data fetched and screenshots taken" });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ message: error });
+    return NextResponse.json({ message: error }, { status: 500 });
   }
 }
