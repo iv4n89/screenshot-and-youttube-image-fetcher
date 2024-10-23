@@ -1,4 +1,4 @@
-import data from "../../data.json";
+import data from '../../tmp/data.json';
 import { Card } from "../components/Card";
 import { Resources } from "../lib/types";
 
