@@ -1,21 +1,18 @@
 import Image from "next/image";
-import { formatFileName, getYoutubeThumbnail } from "../lib/utils";
 
 interface Props {
   title: string;
   description: string;
   url: string;
-  type: string;
+  imageSrc: string;
 }
 
-export const Card: React.FC<Props> = ({ title, description, url, type }) => {
-  let imageSrc;
-  if (url.includes("youtu")) {
-    imageSrc = getYoutubeThumbnail(url);
-  } else {
-    const fileName = formatFileName({ title, url });
-    imageSrc = `/screenshots/${type}/${fileName}`;
-  }
+export const Card: React.FC<Props> = ({
+  title,
+  description,
+  url,
+  imageSrc,
+}) => {
   return (
     <div
       className="border border-gray-200 rounded-lg hover:opacity-75 bg-gray-200 text-gray-700"

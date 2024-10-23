@@ -11,10 +11,12 @@ export function LinkNavbar({ title, href, currentPath }: Readonly<Props>) {
     <li className="w-full flex">
       <button
         className={`px-5 py-2 flex-1 ${
-          currentPath === href ? "bg-gray-300 text-black" : ""
+          currentPath.toLowerCase() === href.toLowerCase()
+            ? "bg-gray-300 text-black"
+            : ""
         }`}
       >
-        <Link href={href}>{title}</Link>
+        <Link href={href.toLowerCase()}>{title}</Link>
       </button>
     </li>
   );

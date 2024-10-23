@@ -1,3 +1,6 @@
+import { getDownloadURL, ref } from "firebase/storage";
+import { storage } from "../firebaseConfig";
+
 export const formatFileName = ({
   title,
   url,
@@ -12,6 +15,13 @@ export const formatFileName = ({
 };
 
 export const getYoutubeThumbnail = (url: string): string => {
-    return `https://img.youtube.com/vi/${url.split("v=")[1]}/0.jpg`;
-}
+  return `https://img.youtube.com/vi/${url.split("v=")[1]}/0.jpg`;
+};
 
+export const getScreenshotImage = async (
+  type: string,
+  { title, url }: { title: string; url: string }
+): Promise<string> => {
+  const fileName = formatFileName({ title, url });
+  return await getDownloadURL(ref(storage, `screenshots/${type}/${fileName}`));
+};

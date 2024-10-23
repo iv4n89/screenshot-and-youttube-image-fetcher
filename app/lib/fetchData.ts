@@ -1,20 +1,12 @@
 "use server";
 
-import path from "path";
 import fs from "fs";
+import path from "path";
 import puppeteer from "puppeteer";
+import { Resource } from "./types";
 
-export const fetchData = async (
-  type: string
-): Promise<{
-  [k: string]: {
-    url: string;
-    title: string;
-    description: string;
-    language: string;
-  };
-}> => {
-  const resourceUrl = `${process.env.GITHUB_RAW_URL}${type}/resources.json`;
+export const fetchData = async (type: string): Promise<Array<Resource>> => {
+  const resourceUrl = `${process.env.GITHUB_RAW_URL}/resources.json`;
   const response = await fetch(resourceUrl, {
     method: "GET",
     headers: {
@@ -50,7 +42,11 @@ export const getScreenshots = async (
   const page = await browser.newPage();
 
   for (const url of urls) {
-    if (fs.existsSync(path.join("public", "screenshots", type, url.title + ".png"))) {
+    if (
+      fs.existsSync(
+        path.join("public", "screenshots", type, url.title + ".png")
+      )
+    ) {
       return;
     }
     await page.goto(url.url);

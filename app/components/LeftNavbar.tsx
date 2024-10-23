@@ -3,25 +3,25 @@
 import { usePathname } from "next/navigation";
 import { LinkNavbar } from "./LinkNavbar";
 
-export default function LeftNavbar() {
+interface Props {
+  types: Array<string>;
+}
+
+export default function LeftNavbar({
+  types,
+}: Readonly<Props>): React.JSX.Element {
   const pathname = usePathname();
 
   return (
     <ul className="space-y-2 grid grid-cols-1">
-      <LinkNavbar title="General" href="/general" currentPath={pathname} />
-      <LinkNavbar
-        title="Javascript"
-        href="/javascript"
-        currentPath={pathname}
-      />
-      <LinkNavbar
-        title="Typescript"
-        href="/typescript"
-        currentPath={pathname}
-      />
-      <LinkNavbar title="React" href="/react" currentPath={pathname} />
-      <LinkNavbar title="Angular" href="/angular" currentPath={pathname} />
-      <LinkNavbar title="Tailwind" href="/tailwind" currentPath={pathname} />
+      {types.map((type) => (
+        <LinkNavbar
+          key={type}
+          title={type}
+          href={`/${type}`}
+          currentPath={pathname}
+        />
+      ))}
     </ul>
   );
 }
