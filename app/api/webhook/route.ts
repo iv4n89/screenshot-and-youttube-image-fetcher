@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { GITHUB_API_REPO } from "@/app/lib/constants";
 import fs from "fs";
 import { NextResponse } from "next/server";
 import path from "path";
-import puppeteer from "puppeteer-core";
-import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer";
 import { storage } from "@/app/firebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
@@ -12,11 +12,12 @@ export async function POST() {
     const response = await fetch(GITHUB_API_REPO);
     const data = await response.json();
 
+    const install = require('puppeteer/internal/node/install.js');
+    await install();
+
     const browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
+      args: ["--use-gl=angle", "--use-angle=swiftshader", "--single-process", "--no-sandbox"],
+      headless: true,
     });
     const page = await browser.newPage();
 
@@ -35,7 +36,7 @@ export async function POST() {
           await getDownloadURL(ref(storage, `screenshots/${type}/${fileName}`));
           console.log(`Screenshot already exists for ${fileName}`);
           continue;
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
           await page.goto(url);
           const filePath = path.join("/tmp", fileName);
@@ -47,6 +48,7 @@ export async function POST() {
       }
     }
 
+    await page.close();
     await browser.close();
 
     return NextResponse.json({ message: "Data fetched and screenshots taken" });

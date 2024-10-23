@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 "use server";
 
 import fs from "fs";
 import path from "path";
-import puppeteer from "puppeteer-core";
-import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer";
 import { Resource } from "./types";
 
 export const fetchData = async (type: string): Promise<Array<Resource>> => {
@@ -39,11 +39,17 @@ export const getScreenshots = async (
     title: resource.title,
   }));
 
+  const install = require("puppeteer/internal/node/install.js");
+  await install();
+
   const browser = await puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath(),
-    headless: chromium.headless,
+    args: [
+      "--use-gl=angle",
+      "--use-angle=swiftshader",
+      "--single-process",
+      "--no-sandbox",
+    ],
+    headless: true,
   });
   const page = await browser.newPage();
 
@@ -61,5 +67,7 @@ export const getScreenshots = async (
       ".png";
     const filePath = path.join("public", "screenshots", type, fileName);
     await page.screenshot({ path: filePath });
+    await page.close();
+    await browser.close();
   }
 };
