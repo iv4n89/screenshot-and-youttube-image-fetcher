@@ -1,5 +1,8 @@
-import { getDownloadURL, ref } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../firebaseConfig";
+import puppeteer from "puppeteer";
+import path from "path";
+import fs from "fs";
 
 export const formatFileName = ({
   title,
@@ -23,5 +26,20 @@ export const getScreenshotImage = async (
   { title, url }: { title: string; url: string }
 ): Promise<string> => {
   const fileName = formatFileName({ title, url });
-  return await getDownloadURL(ref(storage, `screenshots/${type}/${fileName}`));
+  try {
+    return await getDownloadURL(
+      ref(storage, `screenshots/${type}/${fileName}`)
+    );
+  } catch {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto(url);
+    const filePath = path.join("/tmp", fileName);
+    await page.screenshot({ path: filePath });
+    const fileRef = ref(storage, `screenshots/${type}/${fileName}`);
+    const result = await uploadBytes(fileRef, fs.readFileSync(filePath));
+    console.log(`Uploaded ${fileName}`);
+    await browser.close();
+    return getDownloadURL(ref(storage, result.ref.fullPath));
+  }
 };
