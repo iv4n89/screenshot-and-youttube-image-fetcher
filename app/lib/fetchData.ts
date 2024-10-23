@@ -2,7 +2,8 @@
 
 import fs from "fs";
 import path from "path";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 import { Resource } from "./types";
 
 export const fetchData = async (type: string): Promise<Array<Resource>> => {
@@ -38,7 +39,12 @@ export const getScreenshots = async (
     title: resource.title,
   }));
 
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
+  });
   const page = await browser.newPage();
 
   for (const url of urls) {
