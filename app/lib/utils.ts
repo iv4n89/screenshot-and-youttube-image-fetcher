@@ -1,6 +1,7 @@
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../firebaseConfig";
-import puppeteer from "puppeteer";
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
 import path from "path";
 import fs from "fs";
 
@@ -31,7 +32,12 @@ export const getScreenshotImage = async (
       ref(storage, `screenshots/${type}/${fileName}`)
     );
   } catch {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+    });
     const page = await browser.newPage();
     await page.goto(url);
     const filePath = path.join("/tmp", fileName);

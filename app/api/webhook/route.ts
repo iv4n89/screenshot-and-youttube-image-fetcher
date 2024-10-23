@@ -2,7 +2,8 @@ import { GITHUB_API_REPO } from "@/app/lib/constants";
 import fs from "fs";
 import { NextResponse } from "next/server";
 import path from "path";
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chromium from "@sparticuz/chromium";
 import { storage } from "@/app/firebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
@@ -11,7 +12,12 @@ export async function POST() {
     const response = await fetch(GITHUB_API_REPO);
     const data = await response.json();
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+    });
     const page = await browser.newPage();
 
     const types = Object.keys(data);
@@ -29,7 +35,7 @@ export async function POST() {
           await getDownloadURL(ref(storage, `screenshots/${type}/${fileName}`));
           console.log(`Screenshot already exists for ${fileName}`);
           continue;
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
           await page.goto(url);
           const filePath = path.join("/tmp", fileName);
