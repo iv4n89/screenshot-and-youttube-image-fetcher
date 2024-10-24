@@ -1,6 +1,15 @@
+import { Metadata } from "next";
 import { Card } from "../components/Card";
 import { fetchData } from "../lib/fetchData";
 import { getScreenshotImage, getYoutubeThumbnail } from "../lib/utils";
+
+export async function generateMetadata({params}: Readonly<{params: Promise<{type: string}>}>): Promise<Metadata> {
+  const __params = await params;
+  return {
+    title: `Recursos gratuitos de ${__params.type}`,
+    description: `Recursos gratuitos de ${__params.type}`,
+  }
+}
 
 export async function generateStaticParams() {
   const types = await fetch(
