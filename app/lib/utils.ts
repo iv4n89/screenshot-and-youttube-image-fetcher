@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../firebaseConfig";
-import puppeteer from "puppeteer";
-import { downloadBrowsers } from "puppeteer/internal/node/install.js";
-import path from "path";
-import fs from "fs";
 
 export const formatFileName = ({
   title,
@@ -33,26 +29,6 @@ export const getScreenshotImage = async (
       ref(storage, `screenshots/${type}/${fileName}`)
     );
   } catch {
-    await downloadBrowsers();
-
-    const browser = await puppeteer.launch({
-      args: [
-        "--use-gl=angle",
-        "--use-angle=swiftshader",
-        "--single-process",
-        "--no-sandbox",
-      ],
-      headless: true,
-    });
-    const page = await browser.newPage();
-    await page.goto(url);
-    const filePath = path.join("/tmp", fileName);
-    await page.screenshot({ path: filePath });
-    const fileRef = ref(storage, `screenshots/${type}/${fileName}`);
-    const result = await uploadBytes(fileRef, fs.readFileSync(filePath));
-    console.log(`Uploaded ${fileName}`);
-    await page.close();
-    await browser.close();
-    return getDownloadURL(ref(storage, result.ref.fullPath));
+    return '';
   }
 };
