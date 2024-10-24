@@ -24,7 +24,15 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const types = await fetch(process.env.GITHUB_RAW_URL + "/resources.json")
+  const types = await fetch(process.env.GITHUB_RAW_URL + "/resources.json", {
+    method: "GET",
+    headers: {
+      contentType: "application/json",
+    },
+    next: {
+      revalidate: 1,
+    },
+  })
     .then((res) => res.json())
     ?.then((data) => Object.keys(data))
     ?.then((types) =>
