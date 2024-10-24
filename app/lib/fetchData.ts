@@ -4,6 +4,7 @@
 import fs from "fs";
 import path from "path";
 import puppeteer from "puppeteer";
+import { downloadBrowsers } from "puppeteer/internal/node/install.js";
 import { Resource } from "./types";
 
 export const fetchData = async (type: string): Promise<Array<Resource>> => {
@@ -39,8 +40,7 @@ export const getScreenshots = async (
     title: resource.title,
   }));
 
-  const install = require("puppeteer/internal/node/install.js");
-  await install();
+  await downloadBrowsers();
 
   const browser = await puppeteer.launch({
     args: [

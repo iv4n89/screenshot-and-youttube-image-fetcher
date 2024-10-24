@@ -4,6 +4,7 @@ import fs from "fs";
 import { NextResponse } from "next/server";
 import path from "path";
 import puppeteer from "puppeteer";
+import {downloadBrowsers} from 'puppeteer/internal/node/install.js';
 import { storage } from "@/app/firebaseConfig";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
@@ -12,8 +13,7 @@ export async function POST() {
     const response = await fetch(GITHUB_API_REPO);
     const data = await response.json();
 
-    const install = require('puppeteer/internal/node/install.js');
-    await install();
+    await downloadBrowsers();
 
     const browser = await puppeteer.launch({
       args: ["--use-gl=angle", "--use-angle=swiftshader", "--single-process", "--no-sandbox"],

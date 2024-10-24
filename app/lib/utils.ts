@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../firebaseConfig";
-import puppeteer from 'puppeteer';
+import puppeteer from "puppeteer";
+import { downloadBrowsers } from "puppeteer/internal/node/install.js";
 import path from "path";
 import fs from "fs";
 
@@ -32,11 +33,15 @@ export const getScreenshotImage = async (
       ref(storage, `screenshots/${type}/${fileName}`)
     );
   } catch {
-    const install = require('puppeteer/internal/node/install.js');
-    await install();
+    await downloadBrowsers();
 
     const browser = await puppeteer.launch({
-      args: ["--use-gl=angle", "--use-angle=swiftshader", "--single-process", "--no-sandbox"],
+      args: [
+        "--use-gl=angle",
+        "--use-angle=swiftshader",
+        "--single-process",
+        "--no-sandbox",
+      ],
       headless: true,
     });
     const page = await browser.newPage();
