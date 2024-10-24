@@ -11,7 +11,7 @@ export const fetchData = async (type: string): Promise<Array<Resource>> => {
       contentType: "application/json",
     },
     next: {
-      revalidate: 60,
+      revalidate: 1,
     },
   });
   const json = await response.json();
